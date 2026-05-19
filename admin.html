@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Admin | 作品管理</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="admin">
+  <header class="site-header">
+    <nav class="header-bar" aria-label="管理頁導覽">
+      <a class="brand" href="#dashboard">
+        <span class="brand-mark">A</span>
+        <span>Portfolio Admin</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="開啟選單" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links">
+        <a href="#dashboard">總覽</a>
+        <a href="#project-editor">新增/編輯</a>
+        <a href="#projects">作品管理</a>
+        <a href="index.html">公開頁</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="admin-hero" id="dashboard">
+      <div>
+        <p class="eyebrow">Private Admin</p>
+        <h1>管理作品集內容</h1>
+      </div>
+      <div class="admin-stats" aria-label="作品統計">
+        <span id="projectCount">0</span>
+        <strong>目前作品數</strong>
+      </div>
+    </section>
+
+    <section class="section editor-section" id="project-editor">
+      <div class="section-heading">
+        <p class="eyebrow">Project Editor</p>
+        <h2 id="formTitle">新增作品</h2>
+        <p>填寫欄位後作品會保存到這台瀏覽器的 localStorage，公開頁也會讀取同一份資料。</p>
+      </div>
+
+      <form class="project-form" id="projectForm">
+        <input type="hidden" name="id">
+        <label>
+          作品名稱
+          <input type="text" name="title" placeholder="例如：品牌形象網站" required>
+        </label>
+        <label>
+          作品類別
+          <select name="type" required>
+            <option value="網頁">網頁</option>
+            <option value="遊戲">遊戲</option>
+            <option value="3D建模">3D建模</option>
+          </select>
+        </label>
+        <label>
+          作品標籤
+          <input type="text" name="category" placeholder="例如：Web Design / Unity / Blender" required>
+        </label>
+        <label>
+          作品日期
+          <input type="date" name="date" required>
+        </label>
+        <label>
+          作品描述
+          <textarea name="description" rows="4" placeholder="簡短描述作品內容、技術或成果" required></textarea>
+        </label>
+        <label>
+          詳細介紹
+          <textarea name="detail" rows="6" placeholder="放作品背景、製作過程、設計想法、遇到的問題與成果"></textarea>
+        </label>
+        <label>
+          負責項目
+          <input type="text" name="role" placeholder="例如：UI 設計 / 前端開發 / 3D 建模">
+        </label>
+        <label>
+          使用工具
+          <input type="text" name="tools" placeholder="例如：HTML, CSS, Blender, Unity">
+        </label>
+        <label>
+          作品網站跳轉網址
+          <input type="url" name="link" placeholder="https://example.com">
+        </label>
+        <label>
+          縮圖網址
+          <input type="url" name="image" placeholder="可留空，系統會使用預設視覺">
+        </label>
+        <div class="form-actions">
+          <button class="button primary" type="submit" id="submitProject">加入作品</button>
+          <button class="button secondary" type="button" id="cancelEdit" hidden>取消編輯</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="section projects-section" id="projects">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Manage Projects</p>
+          <h2>作品管理</h2>
+        </div>
+        <div class="project-toolbar" aria-label="作品顯示控制">
+          <div class="control-row" role="group" aria-label="排序方式">
+            <span>排序方式</span>
+            <button class="control-chip is-active" type="button" data-sort="date-desc">時間</button>
+            <button class="control-chip" type="button" data-sort="name-asc">名稱</button>
+            <button class="control-chip" type="button" data-sort="clicks-desc">點擊</button>
+          </div>
+          <div class="control-row" role="group" aria-label="排版方式">
+            <span>排版方式</span>
+            <button class="control-chip is-active" type="button" data-view="cards">卡片</button>
+            <button class="control-chip" type="button" data-view="details">詳細</button>
+            <button class="control-chip" type="button" data-view="icons">圖示</button>
+          </div>
+          <button class="button secondary small-button" type="button" id="clearSavedProjects">清除自訂作品</button>
+        </div>
+      </div>
+      <div class="projects-grid admin-grid" id="projectsGrid" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Portfolio Admin.</p>
+  </footer>
+
+  <script src="projects.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

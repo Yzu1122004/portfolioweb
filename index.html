@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio | 作品集網站</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="public">
+  <header class="site-header">
+    <nav class="header-bar" aria-label="主要導覽">
+      <a class="brand" href="#home">
+        <span class="brand-mark">P</span>
+        <span>Portfolio</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="開啟選單" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links">
+        <a href="#about">關於</a>
+        <a href="#projects">作品</a>
+        <a href="#skills">技能</a>
+        <a href="#contact">聯絡</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow">Design / Frontend / Creative Work</p>
+        <h1>作品集</h1>
+        <p class="hero-text">
+          網頁、遊戲與 3D 建模作品整理。
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#projects">查看作品</a>
+          <a class="button secondary" href="#contact">聯絡我</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="作品集視覺預覽">
+        <div class="visual-panel panel-main">
+          <span>01</span>
+          <strong>Portfolio</strong>
+        </div>
+        <div class="visual-panel panel-side">
+          <span>UI</span>
+          <strong>Case Study</strong>
+        </div>
+        <div class="visual-panel panel-bottom">
+          <span>Web</span>
+          <strong>Project</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="section-heading">
+        <p class="eyebrow">About</p>
+        <h2>關於我</h2>
+      </div>
+      <div class="about-grid">
+        <article class="info-block">
+          <h3>個人簡介</h3>
+          <p>專注於互動體驗、視覺呈現與數位作品製作。</p>
+        </article>
+        <article class="info-block">
+          <h3>作品方向</h3>
+          <p>包含網頁介面、遊戲原型、3D 場景與模型製作。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section projects-section" id="projects">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">Projects</p>
+          <h2>作品集</h2>
+        </div>
+        <div class="project-toolbar" aria-label="作品顯示控制">
+          <div class="control-row" role="group" aria-label="排序方式">
+            <span>排序方式</span>
+            <button class="control-chip is-active" type="button" data-sort="date-desc">時間</button>
+            <button class="control-chip" type="button" data-sort="name-asc">名稱</button>
+            <button class="control-chip" type="button" data-sort="clicks-desc">點擊</button>
+          </div>
+          <div class="control-row" role="group" aria-label="排版方式">
+            <span>排版方式</span>
+            <button class="control-chip is-active" type="button" data-view="cards">卡片</button>
+            <button class="control-chip" type="button" data-view="details">詳細</button>
+            <button class="control-chip" type="button" data-view="icons">圖示</button>
+          </div>
+        </div>
+      </div>
+      <div class="projects-grid" id="projectsGrid" aria-live="polite"></div>
+    </section>
+
+    <section class="section" id="skills">
+      <div class="section-heading">
+        <p class="eyebrow">Skills</p>
+        <h2>技能與工具</h2>
+      </div>
+      <div class="skills-list">
+        <span>HTML</span>
+        <span>CSS</span>
+        <span>JavaScript</span>
+        <span>RWD</span>
+        <span>UI Design</span>
+        <span>Figma</span>
+      </div>
+    </section>
+
+    <section class="section contact-section" id="contact">
+      <div class="section-heading">
+        <p class="eyebrow">Contact</p>
+        <h2>聯絡我</h2>
+      </div>
+      <p>歡迎透過 Email 聯絡。</p>
+      <a class="button primary" href="mailto:email@example.com">email@example.com</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Portfolio. All rights reserved.</p>
+  </footer>
+
+  <script src="projects.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

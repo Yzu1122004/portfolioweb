@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Detail | 作品介紹</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="detail">
+  <header class="site-header">
+    <nav class="header-bar" aria-label="作品介紹導覽">
+      <a class="brand" href="index.html#projects">
+        <span class="brand-mark">←</span>
+        <span>返回</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="開啟選單" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links">
+        <a href="index.html#projects">返回作品集</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="project-detail-page" id="project-detail">
+      <article class="project-detail-panel reveal" id="projectDetailPanel" aria-live="polite">
+        <div class="detail-visual detail-animate" id="detailVisual"></div>
+        <div class="detail-content">
+          <span class="project-category detail-animate" id="detailCategory"></span>
+          <h2 class="detail-animate" id="detailTitle"></h2>
+          <p class="detail-summary detail-animate" id="detailSummary"></p>
+
+          <div class="detail-info-grid detail-animate">
+            <div>
+              <span>類別</span>
+              <strong id="detailType"></strong>
+            </div>
+            <div>
+              <span>日期</span>
+              <strong id="detailDate"></strong>
+            </div>
+            <div>
+              <span>點擊</span>
+              <strong id="detailClicks"></strong>
+            </div>
+          </div>
+
+          <div class="detail-section detail-animate">
+            <h3>詳細介紹</h3>
+            <p id="detailText"></p>
+          </div>
+
+          <div class="detail-section detail-animate">
+            <h3>負責項目與工具</h3>
+            <p id="detailRole"></p>
+            <p id="detailTools"></p>
+          </div>
+
+          <div class="hero-actions detail-animate">
+            <a class="button primary" id="detailLink" href="#" target="_blank" rel="noreferrer">前往作品網站</a>
+            <a class="button secondary" href="index.html#projects">回作品集</a>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2026 Portfolio. Project detail.</p>
+  </footer>
+
+  <script src="projects.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
