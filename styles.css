@@ -914,6 +914,72 @@ textarea {
   margin-right: auto;
 }
 
+.contact-methods {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0;
+}
+
+.contact-methods .button {
+  display: inline-flex;
+  gap: 12px;
+  font-size: 1.05rem;
+}
+
+.contact-methods .button span:first-child {
+  font-size: 1.3rem;
+}
+
+.social-divider {
+  width: 60px;
+  height: 2px;
+  margin: 28px auto;
+  background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+}
+
+.social-section {
+  margin-top: 34px;
+}
+
+.social-label {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.social-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  background: var(--black-soft);
+  color: var(--yellow);
+  transition: all 200ms ease;
+}
+
+.social-icon:hover {
+  color: var(--black);
+  background: var(--yellow);
+  border-color: var(--yellow);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(255, 210, 31, 0.2);
+}
+
+.social-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
 .site-footer {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
@@ -1064,6 +1130,18 @@ textarea {
   .card-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .contact-methods {
+    flex-direction: column;
+  }
+
+  .contact-methods .button {
+    width: 100%;
+  }
+
+  .social-links {
+    gap: 12px;
   }
 
   .project-card--icons .project-content {
