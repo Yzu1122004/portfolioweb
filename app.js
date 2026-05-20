@@ -1,6 +1,8 @@
 const storageKey = "portfolio-projects";
 const clickStorageKey = "portfolio-project-clicks";
 const pageType = document.body.dataset.page || "public";
+const SHEET_API_URL = "https://opensheet.elk.sh/1THH7KN2dax_oHpyltA10ptONQzicKHOKf1KO0bn-7ok/工作表1";
+let cloudProjects = [];
 const siteHeader = document.querySelector(".site-header");
 const projectsGrid = document.querySelector("#projectsGrid");
 const projectDetailPanel = document.querySelector("#projectDetailPanel");
@@ -103,7 +105,8 @@ function normalizeProject(project, index, isDefault = false) {
 
 function getAllProjects() {
   const savedProjects = getSavedProjects().map((project, index) => normalizeProject(project, index));
-  const baseProjects = defaultProjects.map((project, index) => normalizeProject(project, index, true));
+  // 將原本的 defaultProjects 改為 cloudProjects
+  const baseProjects = cloudProjects.map((project, index) => normalizeProject(project, index, true));
   return [...savedProjects, ...baseProjects];
 }
 
@@ -669,6 +672,29 @@ updateControlButtons(viewButtons, currentView, "view");
 resetForm();
 updateHeaderState();
 window.addEventListener("scroll", updateHeaderState, { passive: true });
-setupBubblePlayground();
-renderProjects();
-renderDetailPage();
+// setupBubblePlayground();
+// renderProjects();
+// renderDetailPage();
+
+async function initPortfolio() {
+  try {
+    if (projectsGrid) projectsGrid.innerHTML = '<p class="empty-message">作品載入中...</p>';
+    
+    const response = await fetch(SHEET_API_URL);
+    if (!response.ok) throw new Error("無法取得雲端資料");
+    
+    cloudProjects = await response.json();
+    console.log("雲端作品載入成功！共 " + cloudProjects.length + " 件作品。");
+    
+  } catch (error) {
+    console.error("讀取 Google Sheet 失敗，啟用備用本地資料:", error);
+    cloudProjects = typeof defaultProjects !== 'undefined' ? defaultProjects : [];
+  } finally {
+    setupBubblePlayground();
+    renderProjects();
+    renderDetailPage();
+  }
+}
+
+// 執行初始化
+initPortfolio();
