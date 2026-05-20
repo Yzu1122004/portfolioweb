@@ -618,7 +618,7 @@ function deleteProject(id) {
 }
 
 if (projectForm) {
-  projectForm.addEventListener("submit", async (e) => { // 注意：這裡加上了 async
+  projectForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const titleInput = document.querySelector("#projectTitle");
@@ -632,15 +632,16 @@ if (projectForm) {
     if (submitProject) submitProject.textContent = "傳送至雲端中...";
 
     try {
-      if (editingId) {
+      // 修正：將原本的 editingId 改為你原生的 editId
+      if (editId) {
         // 如果是編輯模式（修改既有作品）
-        const index = savedProjects.findIndex((p) => p.id === editingId);
+        const index = savedProjects.findIndex((p) => p.id === editId);
         if (index !== -1) {
           savedProjects[index] = currentProject;
         }
       } else {
-        // 【核心新增】如果是新增作品：同時發送 POST 請求傳給 Google 試算表
-        const response = await fetch(GAS_API_URL, {
+        // 如果是全新新增作品：發送 POST 請求傳給 Google 試算表
+        await fetch(GAS_API_URL, {
           method: "POST",
           mode: "no-cors", // 使用 no-cors 模式避免瀏覽器跨網域安全性阻擋
           headers: {
@@ -664,15 +665,17 @@ if (projectForm) {
     } catch (error) {
       console.error("同步至雲端失敗:", error);
       alert("同步失敗，僅儲存於本地瀏覽器。");
-      // 萬一網路失敗，還是塞進本地快取
-      if (!editingId) savedProjects.push(currentProject);
+      // 萬一網路失敗，且不是編輯模式，還是塞進本地快取
+      if (!editId) savedProjects.push(currentProject);
       setSavedProjects(savedProjects);
     } finally {
       // 恢復按鈕文字並重設表單
       if (submitProject) submitProject.textContent = originalBtnText;
       renderProjects();
       resetForm();
-      document.querySelector("#projects").scrollIntoView({ behavior: "smooth" }); // 滾動到作品列表
+      if (projectsGrid) {
+        projectsGrid.scrollIntoView({ behavior: "smooth" }); // 滾動到作品列表
+      }
     }
   });
 }
