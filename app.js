@@ -624,6 +624,8 @@ if (projectForm) {
     const titleInput = document.querySelector("#projectTitle");
     if (titleInput && !titleInput.value.trim()) return;
 
+    // 1. 取得目前表單中的 id 值
+    const formId = projectForm.elements.id.value; 
     const currentProject = getFormProject();
     const savedProjects = getSavedProjects();
 
@@ -632,10 +634,10 @@ if (projectForm) {
     if (submitProject) submitProject.textContent = "傳送至雲端中...";
 
     try {
-      // 修正：將原本的 editingId 改為你原生的 editId
-      if (editId) {
+      // 2. 修正：判斷 formId 是否有值（有值代表是編輯既有作品，空字串代表是全新新增）
+      if (formId) {
         // 如果是編輯模式（修改既有作品）
-        const index = savedProjects.findIndex((p) => p.id === editId);
+        const index = savedProjects.findIndex((p) => p.id === formId);
         if (index !== -1) {
           savedProjects[index] = currentProject;
         }
@@ -666,7 +668,7 @@ if (projectForm) {
       console.error("同步至雲端失敗:", error);
       alert("同步失敗，僅儲存於本地瀏覽器。");
       // 萬一網路失敗，且不是編輯模式，還是塞進本地快取
-      if (!editId) savedProjects.push(currentProject);
+      if (!formId) savedProjects.push(currentProject);
       setSavedProjects(savedProjects);
     } finally {
       // 恢復按鈕文字並重設表單
