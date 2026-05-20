@@ -3,6 +3,7 @@ const clickStorageKey = "portfolio-project-clicks";
 const pageType = document.body.dataset.page || "public";
 const SHEET_API_URL = "https://opensheet.elk.sh/1THH7KN2dax_oHpyltA10ptONQzicKHOKf1KO0bn-7ok/工作表1";
 let cloudProjects = [];
+const GAS_API_URL ="https://script.google.com/macros/s/AKfycbxFOnkGHMJHMfMM2PkpPXLoeVq8BxXhu9B0oMgx5QijZiy11M_Tyfc8pr2WqI7oeelQ/exec";
 const siteHeader = document.querySelector(".site-header");
 const projectsGrid = document.querySelector("#projectsGrid");
 const projectDetailPanel = document.querySelector("#projectDetailPanel");
@@ -617,12 +618,62 @@ function deleteProject(id) {
 }
 
 if (projectForm) {
-  projectForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    upsertProject(getFormProject());
-    renderProjects();
-    resetForm();
-    document.querySelector("#projects").scrollIntoView({ behavior: "smooth" });
+  projectForm.addEventListener("submit", async (e) => { // 注意：這裡加上了 async
+    e.preventDefault();
+
+    const titleInput = document.querySelector("#projectTitle");
+    if (titleInput && !titleInput.value.trim()) return;
+
+    const currentProject = getFormProject();
+    const savedProjects = getSavedProjects();
+
+    // 顯示儲存中的按鈕視覺提示
+    const originalBtnText = submitProject ? submitProject.textContent : "確認送出";
+    if (submitProject) submitProject.textContent = "傳送至雲端中...";
+
+    try {
+      if (editingId) {
+        // 如果是編輯模式（修改既有作品）
+        const index = savedProjects.findIndex((p) => p.id === editingId);
+        if (index !== -1) {
+          savedProjects[index] = currentProject;
+        }
+      } else {
+        // 【核心新增】如果是新增作品：同時發送 POST 請求傳給 Google 試算表
+        const response = await fetch(GAS_API_URL, {
+          method: "POST",
+          mode: "no-cors", // 使用 no-cors 模式避免瀏覽器跨網域安全性阻擋
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(currentProject),
+        });
+        
+        console.log("已成功發送資料至 Google 試算表！");
+
+        // 原本的本地快取機制保留（確保本地能立即看到）
+        savedProjects.push(currentProject);
+      }
+
+      // 儲存到本地並刷新畫面
+      setSavedProjects(savedProjects);
+      
+      // 提醒：因為 OpenSheet API 有快取，Google 試算表更新後可能需要 1-2 分鐘才會同步到 openSheet
+      alert("作品已成功同步至雲端試算表！OpenSheet 雲端更新可能需要 1~2 分鐘更新快取。");
+
+    } catch (error) {
+      console.error("同步至雲端失敗:", error);
+      alert("同步失敗，僅儲存於本地瀏覽器。");
+      // 萬一網路失敗，還是塞進本地快取
+      if (!editingId) savedProjects.push(currentProject);
+      setSavedProjects(savedProjects);
+    } finally {
+      // 恢復按鈕文字並重設表單
+      if (submitProject) submitProject.textContent = originalBtnText;
+      renderProjects();
+      resetForm();
+      document.querySelector("#projects").scrollIntoView({ behavior: "smooth" }); // 滾動到作品列表
+    }
   });
 }
 
