@@ -595,13 +595,11 @@ function upsertProject(project) {
 }
   
 async function syncProjectToCloud(project) {
-  // 建立標準的 URLSearchParams 表單格式，確保 GAS 能完美讀取
   const formData = new URLSearchParams();
   for (const [key, value] of Object.entries(project)) {
     formData.append(key, value);
   }
 
-  // 移除 no-cors，才能正常捕捉 Google 回傳的權限或伺服器錯誤
   const response = await fetch(GAS_API_URL, {
     method: "POST",
     headers: {
@@ -610,9 +608,8 @@ async function syncProjectToCloud(project) {
     body: formData.toString()
   });
 
-  // 如果 Google 回傳 401 或 500 等錯誤，主動拋出異常
   if (!response.ok) {
-    throw new Error(`雲端伺服器回應錯誤碼: ${response.status}`);
+    throw new Error(`伺服器回應錯誤: ${response.status}`);
   }
   
   return response;
