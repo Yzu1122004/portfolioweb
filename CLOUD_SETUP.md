@@ -31,7 +31,7 @@ image
 將下方程式貼到 Google Apps Script，並把 `SHEET_NAME` 改成你的工作表名稱。
 
 ```js
-const SHEET_NAME = "工作表1";
+const SHEET_NAME = "測試";
 
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
