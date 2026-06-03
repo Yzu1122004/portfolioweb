@@ -619,7 +619,7 @@ async function syncProjectToCloud(project) {
 }
 
 async function loadCloudProjects() {
-  const response = await fetch(`${SHEET_API_URL}?t=${Date.now()}`);
+  const response =await fetch(SHEET_API_URL);
   if (!response.ok) throw new Error("無法取得雲端資料");
   cloudProjects = await response.json();
   return cloudProjects;
