@@ -31,19 +31,41 @@ image
 將下方程式貼到 Google Apps Script，並把 `SHEET_NAME` 改成你的工作表名稱。
 
 ```js
-const SHEET_NAME = "測試";
+const SHEET_NAME = "測試"; // 請確保與你試算表左下角分頁名稱一模一樣
+
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({ 
+    status: "success", 
+    message: "Google Apps Script 連線成功！" 
+  })).setMimeType(ContentService.MimeType.JSON);
+}
 
 function doPost(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-  const data = JSON.parse(e.postData.contents);
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const row = headers.map((header) => data[header] || "");
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) throw new Error("找不到工作表：" + SHEET_NAME);
+    
+    // 解析前端傳來的 JSON 字串
+    const data = JSON.parse(e.postData.contents);
+    
+    // 自動對應第一列的欄位名稱 (id, title, type 等)
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    const row = headers.map((header) => data[header] || "");
 
-  sheet.appendRow(row);
+    // 寫入試算表
+    sheet.appendRow(row);
 
-  return ContentService
-    .createTextOutput(JSON.stringify({ ok: true }))
-    .setMimeType(ContentService.MimeType.JSON);
+    // 關鍵：成功時回傳正確的 JSON 格式
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: true, message: "新增成功！" }))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    // 失敗時也要回傳 JSON，才不會觸發前端的 CORS 阻擋
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 ```
 
