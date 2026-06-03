@@ -47,6 +47,8 @@ function doPost(e) {
 }
 ```
 
+如果前端使用 `mode: "no-cors"`，不要強制設定 `Content-Type: application/json`。目前網站會用純文字 body 送出 JSON，Apps Script 仍可用 `JSON.parse(e.postData.contents)` 解析。
+
 ## Deploy
 
 1. 在 Apps Script 點選 `Deploy`。

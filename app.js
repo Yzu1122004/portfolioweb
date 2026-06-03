@@ -3,7 +3,7 @@ const clickStorageKey = "portfolio-project-clicks";
 const pageType = document.body.dataset.page || "public";
 const SHEET_API_URL = "https://opensheet.elk.sh/1THH7KN2dax_oHpyltA10ptONQzicKHOKf1KO0bn-7ok/工作表1";
 let cloudProjects = [];
-const GAS_API_URL ="https://script.google.com/macros/s/AKfycbyMFGsBQOQbcla_Ipk5pEv_o-_cIo6b7J2uLW3gU3j0ft3CpZ8BLghxVztsGVMk6vZr/exec";
+const GAS_API_URL ="https://script.google.com/macros/s/AKfycbw4kYEsOOpktppnmUTeXJoRgSy7pQi8lOqMV__RjeGD-tbOJBvie1tXIT85SNJ2gsa9/exec";
 const siteHeader = document.querySelector(".site-header");
 const projectsGrid = document.querySelector("#projectsGrid");
 const projectDetailPanel = document.querySelector("#projectDetailPanel");
@@ -595,16 +595,11 @@ function upsertProject(project) {
 }
 
 async function syncProjectToCloud(project) {
-  const response = await fetch(GAS_API_URL, {
+  await fetch(GAS_API_URL, {
     method: "POST",
     mode: "no-cors",
-    headers: {
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify(project)
   });
-
-  return response;
 }
 
 async function loadCloudProjects() {
@@ -660,7 +655,12 @@ if (projectForm) {
       localStorage.removeItem(storageKey);
       alert("已送出到雲端資料表。若公開頁尚未立即更新，請等 1~2 分鐘後重新整理。");
 
-      await loadCloudProjects();
+      try {
+        await loadCloudProjects();
+      } catch (reloadError) {
+        console.warn("作品已送出，但 OpenSheet 尚未更新快取:", reloadError);
+      }
+
       renderProjects();
       resetForm();
 
