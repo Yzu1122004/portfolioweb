@@ -105,10 +105,16 @@ function normalizeProject(project, index, isDefault = false) {
 }
 
 function getAllProjects() {
-  const savedProjects = getSavedProjects().map((project, index) => normalizeProject(project, index));
-  // 將原本的 defaultProjects 改為 cloudProjects
-  const baseProjects = cloudProjects.map((project, index) => normalizeProject(project, index, true));
-  return [...savedProjects, ...baseProjects];
+  const remoteProjects = cloudProjects.map((project, index) => normalizeProject(project, index, true));
+  const localFallbackProjects = getSavedProjects().map((project, index) => normalizeProject(project, index));
+
+  if (remoteProjects.length > 0) {
+    return remoteProjects;
+  }
+
+  return localFallbackProjects.length > 0
+    ? localFallbackProjects
+    : defaultProjects.map((project, index) => normalizeProject(project, index, true));
 }
 
 function getSortedProjects(projects) {
@@ -588,6 +594,26 @@ function upsertProject(project) {
   setSavedProjects(savedProjects);
 }
 
+async function syncProjectToCloud(project) {
+  const response = await fetch(GAS_API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(project)
+  });
+
+  return response;
+}
+
+async function loadCloudProjects() {
+  const response = await fetch(`${SHEET_API_URL}?t=${Date.now()}`);
+  if (!response.ok) throw new Error("無法取得雲端資料");
+  cloudProjects = await response.json();
+  return cloudProjects;
+}
+
 function editProject(project) {
   if (!projectForm) return;
 
@@ -618,65 +644,38 @@ function deleteProject(id) {
 }
 
 if (projectForm) {
-  projectForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  projectForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
-    const titleInput = document.querySelector("#projectTitle");
-    if (titleInput && !titleInput.value.trim()) return;
+    const project = getFormProject();
+    const originalButtonText = submitProject ? submitProject.textContent : "加入作品";
 
-    // 1. 取得目前表單中的 id 值
-    const formId = projectForm.elements.id.value; 
-    const currentProject = getFormProject();
-    const savedProjects = getSavedProjects();
-
-    // 顯示儲存中的按鈕視覺提示
-    const originalBtnText = submitProject ? submitProject.textContent : "確認送出";
-    if (submitProject) submitProject.textContent = "傳送至雲端中...";
+    if (submitProject) {
+      submitProject.disabled = true;
+      submitProject.textContent = "同步到雲端中...";
+    }
 
     try {
-      // 2. 修正：判斷 formId 是否有值（有值代表是編輯既有作品，空字串代表是全新新增）
-      if (formId) {
-        // 如果是編輯模式（修改既有作品）
-        const index = savedProjects.findIndex((p) => p.id === formId);
-        if (index !== -1) {
-          savedProjects[index] = currentProject;
-        }
-      } else {
-        // 如果是全新新增作品：發送 POST 請求傳給 Google 試算表
-        await fetch(GAS_API_URL, {
-          method: "POST",
-          mode: "no-cors", // 使用 no-cors 模式避免瀏覽器跨網域安全性阻擋
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(currentProject),
-        });
-        
-        console.log("已成功發送資料至 Google 試算表！");
+      await syncProjectToCloud(project);
+      localStorage.removeItem(storageKey);
+      alert("已送出到雲端資料表。若公開頁尚未立即更新，請等 1~2 分鐘後重新整理。");
 
-        // 原本的本地快取機制保留（確保本地能立即看到）
-        savedProjects.push(currentProject);
-      }
-
-      // 儲存到本地並刷新畫面
-      setSavedProjects(savedProjects);
-      
-      // 提醒：因為 OpenSheet API 有快取，Google 試算表更新後可能需要 1-2 分鐘才會同步到 openSheet
-      alert("作品已成功同步至雲端試算表！OpenSheet 雲端更新可能需要 1~2 分鐘更新快取。");
-
-    } catch (error) {
-      console.error("同步至雲端失敗:", error);
-      alert("同步失敗，僅儲存於本地瀏覽器。");
-      // 萬一網路失敗，且不是編輯模式，還是塞進本地快取
-      if (!formId) savedProjects.push(currentProject);
-      setSavedProjects(savedProjects);
-    } finally {
-      // 恢復按鈕文字並重設表單
-      if (submitProject) submitProject.textContent = originalBtnText;
+      await loadCloudProjects();
       renderProjects();
       resetForm();
+
       if (projectsGrid) {
-        projectsGrid.scrollIntoView({ behavior: "smooth" }); // 滾動到作品列表
+        projectsGrid.scrollIntoView({ behavior: "smooth" });
+      }
+    } catch (error) {
+      console.error("同步至雲端失敗:", error);
+      upsertProject(project);
+      renderProjects();
+      alert("雲端同步失敗，作品暫存在這台瀏覽器。請確認 Google Apps Script 部署與權限。");
+    } finally {
+      if (submitProject) {
+        submitProject.disabled = false;
+        submitProject.textContent = originalButtonText;
       }
     }
   });
@@ -735,11 +734,8 @@ window.addEventListener("scroll", updateHeaderState, { passive: true });
 async function initPortfolio() {
   try {
     if (projectsGrid) projectsGrid.innerHTML = '<p class="empty-message">作品載入中...</p>';
-    
-    const response = await fetch(SHEET_API_URL);
-    if (!response.ok) throw new Error("無法取得雲端資料");
-    
-    cloudProjects = await response.json();
+
+    await loadCloudProjects();
     console.log("雲端作品載入成功！共 " + cloudProjects.length + " 件作品。");
     
   } catch (error) {

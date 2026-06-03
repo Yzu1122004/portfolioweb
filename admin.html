@@ -45,7 +45,7 @@
       <div class="section-heading">
         <p class="eyebrow">Project Editor</p>
         <h2 id="formTitle">新增作品</h2>
-        <p>填寫欄位後作品會保存到這台瀏覽器的 localStorage，公開頁也會讀取同一份資料。</p>
+        <p>填寫欄位後作品會同步到雲端資料表，其他電腦重新整理公開頁後也能看到。</p>
       </div>
 
       <form class="project-form" id="projectForm">
@@ -120,7 +120,7 @@
             <button class="control-chip" type="button" data-view="details">詳細</button>
             <button class="control-chip" type="button" data-view="icons">圖示</button>
           </div>
-          <button class="button secondary small-button" type="button" id="clearSavedProjects">清除自訂作品</button>
+          <button class="button secondary small-button" type="button" id="clearSavedProjects">清除本機快取</button>
         </div>
       </div>
       <div class="projects-grid admin-grid" id="projectsGrid" aria-live="polite"></div>

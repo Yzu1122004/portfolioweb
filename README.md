@@ -15,3 +15,8 @@
 - 排版方式：卡片、詳細、圖示
 - 互動泡泡背景
 - RWD 響應式設計
+- Google Sheet / Apps Script 雲端資料同步
+
+## Cloud data
+
+跨電腦同步設定請看 `CLOUD_SETUP.md`。
