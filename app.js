@@ -1,7 +1,7 @@
 const storageKey = "portfolio-projects";
 const clickStorageKey = "portfolio-project-clicks";
 const pageType = document.body.dataset.page || "public";
-const SHEET_API_URL = "https://opensheet.elk.sh/1THH7KN2dax_oHpyltA10ptONQzicKHOKf1KO0bn-7ok/t1";
+const SHEET_API_URL = "https://opensheet.elk.sh/1THH7KN2dax_oHpyltA10ptONQzicKHOKf1KO0bn-7ok/測試";
 let cloudProjects = [];
 const GAS_API_URL ="https://script.google.com/macros/s/AKfycbwYRux2BuFOVmeTSNFe3c2S5Gfz0809bPF_CufVqGAIJ4VV4EsPauGFDtxuhh5ElH4/exec";
 const siteHeader = document.querySelector(".site-header");
