@@ -595,21 +595,18 @@ function upsertProject(project) {
 }
   
 async function syncProjectToCloud(project) {
-  const formData = new URLSearchParams();
-  for (const [key, value] of Object.entries(project)) {
-    formData.append(key, value);
-  }
-
+  // 改回發送純 JSON 字串
   const response = await fetch(GAS_API_URL, {
     method: "POST",
+    // 這裡不要用 no-cors，才能正常接收成功或失敗的狀態
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "text/plain" 
     },
-    body: formData.toString()
+    body: JSON.stringify(project)
   });
 
   if (!response.ok) {
-    throw new Error(`伺服器回應錯誤: ${response.status}`);
+    throw new Error(`雲端伺服器回應錯誤碼: ${response.status}`);
   }
   
   return response;
