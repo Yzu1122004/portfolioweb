@@ -72,6 +72,21 @@ function getProjectClicks(id) {
   return getClickCounts()[id] || 0;
 }
 
+function formatProjectDate(value) {
+  if (!value) return "";
+  const rawValue = String(value);
+  const isoDate = rawValue.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoDate) return isoDate[0];
+
+  const parsedDate = new Date(rawValue);
+  if (Number.isNaN(parsedDate.getTime())) return rawValue;
+
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function incrementProjectClicks(id) {
   const clickCounts = getClickCounts();
   clickCounts[id] = (clickCounts[id] || 0) + 1;
@@ -91,7 +106,7 @@ function normalizeProject(project, index, isDefault = false) {
     title: project.title || "未命名作品",
     type: project.type || (projectTypes.includes(project.category) ? project.category : "網頁"),
     category: projectTypes.includes(project.category) ? "作品" : project.category || "作品",
-    date: project.date || "2026-01-01",
+    date: formatProjectDate(project.date || "2026-01-01"),
     description: project.description || "",
     detail: project.detail || project.description || "",
     role: project.role || "作品製作",
