@@ -449,10 +449,24 @@ function preloadNextPage(url) {
   }
 }
 
+function shouldPlayPageIntro(isPublicHome) {
+  let shouldPlay = isPublicHome;
+
+  try {
+    shouldPlay = shouldPlay || sessionStorage.getItem("playPageTransition") === "true";
+    sessionStorage.removeItem("playPageTransition");
+  } catch (error) {
+    return shouldPlay;
+  }
+
+  return shouldPlay;
+}
+
 function setupPageTransitions() {
   const isPublicHome = document.body.dataset.page === "public";
+  const playIntro = shouldPlayPageIntro(isPublicHome);
 
-  if (isPublicHome) {
+  if (playIntro) {
     document.body.classList.add("is-intro-loading");
     window.setTimeout(() => {
       document.body.classList.add("is-holding");
@@ -478,18 +492,11 @@ function setupPageTransitions() {
     if (url.origin !== window.location.origin) return;
 
     event.preventDefault();
+    try {
+      sessionStorage.setItem("playPageTransition", "true");
+    } catch (error) {}
     preloadNextPage(url);
-    document.body.classList.remove("is-intro-loading", "is-holding", "is-intro-revealing");
-    document.body.classList.add("is-loaded", "is-leaving");
-    window.setTimeout(() => {
-      document.body.classList.add("is-holding");
-    }, 2000);
-    window.setTimeout(() => {
-      document.body.classList.add("is-wiping");
-    }, 5000);
-    window.setTimeout(() => {
-      window.location.href = url.href;
-    }, 7000);
+    window.location.href = url.href;
   });
 }
 

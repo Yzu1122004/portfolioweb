@@ -109,8 +109,7 @@ body::before {
   animation: loadingTextJump 720ms ease-in-out infinite;
 }
 
-body.is-intro-loading .page-transition,
-body.is-leaving .page-transition {
+body.is-intro-loading .page-transition {
   animation: pageWipe 2000ms ease forwards;
 }
 
@@ -126,24 +125,8 @@ body.is-intro-loading.is-intro-revealing .loading-mark {
   opacity: 0;
 }
 
-body.is-leaving.is-wiping .page-transition {
-  animation: pageReveal 2000ms ease forwards;
-}
-
 body.is-loaded .page-transition {
   animation: pageReveal 700ms ease both;
-}
-
-body.is-loaded.is-leaving .page-transition {
-  animation: pageWipe 2000ms ease forwards;
-}
-
-body.is-loaded.is-leaving.is-wiping .page-transition {
-  animation: pageReveal 2000ms ease forwards;
-}
-
-body.is-loaded.is-leaving.is-holding .loading-mark {
-  opacity: 1;
 }
 
 .bubble-canvas {
