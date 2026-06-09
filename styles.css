@@ -651,6 +651,27 @@ h3 {
   color: var(--muted);
 }
 
+.detail-paragraphs,
+.project-detail-text {
+  display: grid;
+  gap: 12px;
+}
+
+.detail-paragraphs p,
+.project-detail-text p {
+  margin: 0;
+  padding-left: 14px;
+  color: var(--muted);
+  line-height: 1.85;
+  border-left: 3px solid rgba(255, 210, 31, 0.45);
+}
+
+.project-detail-text {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
 .section-heading {
   max-width: 760px;
   margin-bottom: 34px;

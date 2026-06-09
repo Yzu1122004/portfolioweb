@@ -92,6 +92,30 @@ function formatProjectDate(value) {
   return `${year}-${month}-${day}`;
 }
 
+function renderParagraphs(container, text) {
+  if (!container) return;
+
+  const paragraphs = String(text || "")
+    .split(/\n\s*\n|\r?\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  container.replaceChildren();
+
+  if (!paragraphs.length) {
+    const empty = document.createElement("p");
+    empty.textContent = "尚未填寫詳細介紹。";
+    container.appendChild(empty);
+    return;
+  }
+
+  paragraphs.forEach((paragraph) => {
+    const item = document.createElement("p");
+    item.textContent = paragraph;
+    container.appendChild(item);
+  });
+}
+
 function incrementProjectClicks(id) {
   const clickCounts = getClickCounts();
   clickCounts[id] = (clickCounts[id] || 0) + 1;
@@ -250,12 +274,14 @@ function createProjectCard(project, index, viewMode = "cards") {
         <div><dt>點擊</dt><dd></dd></div>
       </dl>
       <p></p>
+      <div class="project-detail-text"></div>
     `;
     const detailItems = content.querySelectorAll(".project-details dd");
     detailItems[0].textContent = project.type;
     detailItems[1].textContent = project.date;
     detailItems[2].textContent = `${project.clicks} 次`;
     content.querySelector("p").textContent = project.description;
+    renderParagraphs(content.querySelector(".project-detail-text"), project.detail);
   } else {
     content.innerHTML = `
       <span class="project-category"></span>
@@ -377,7 +403,7 @@ function updateProjectDetail(projectId, shouldUpdateUrl = false) {
     document.querySelector("#detailType").textContent = project.type;
     document.querySelector("#detailDate").textContent = project.date;
     document.querySelector("#detailClicks").textContent = `${project.clicks} 次`;
-    document.querySelector("#detailText").textContent = project.detail;
+    renderParagraphs(document.querySelector("#detailText"), project.detail);
     document.querySelector("#detailRole").textContent = `負責項目：${project.role}`;
     document.querySelector("#detailTools").textContent = `使用工具：${project.tools}`;
 
