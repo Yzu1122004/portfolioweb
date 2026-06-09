@@ -452,24 +452,25 @@ function setupPageTransitions() {
     document.body.classList.add("is-loaded");
   }
 
-  document.querySelectorAll("a[href]").forEach((link) => {
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest("a[href]");
+    if (!link) return;
+
     const href = link.getAttribute("href");
     if (!href || href.startsWith("#") || link.target === "_blank" || href.startsWith("mailto:")) return;
 
-    link.addEventListener("click", (event) => {
-      const url = new URL(href, window.location.href);
-      if (url.origin !== window.location.origin) return;
+    const url = new URL(href, window.location.href);
+    if (url.origin !== window.location.origin) return;
 
-      event.preventDefault();
-      document.body.classList.remove("is-intro-loading", "is-intro-revealing");
-      document.body.classList.add("is-loaded", "is-leaving");
-      window.setTimeout(() => {
-        document.body.classList.add("is-wiping");
-      }, 5000);
-      window.setTimeout(() => {
-        window.location.href = url.href;
-      }, 7000);
-    });
+    event.preventDefault();
+    document.body.classList.remove("is-intro-loading", "is-intro-revealing");
+    document.body.classList.add("is-loaded", "is-leaving");
+    window.setTimeout(() => {
+      document.body.classList.add("is-wiping");
+    }, 5000);
+    window.setTimeout(() => {
+      window.location.href = url.href;
+    }, 7000);
   });
 }
 
