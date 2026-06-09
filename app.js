@@ -762,7 +762,7 @@ if (navToggle && navLinks) {
   });
 }
 
-observeReveals(document.querySelectorAll(".section, .admin-stats, .info-block, .project-form"));
+observeReveals(document.querySelectorAll(".section, .admin-stats, .info-block, .about-card, .project-form"));
 updateControlButtons(sortButtons, currentSort, "sort");
 updateControlButtons(viewButtons, currentView, "view");
 resetForm();
