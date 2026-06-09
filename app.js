@@ -451,6 +451,9 @@ function setupPageTransitions() {
       event.preventDefault();
       document.body.classList.add("is-leaving");
       window.setTimeout(() => {
+        document.body.classList.add("is-wiping");
+      }, 5000);
+      window.setTimeout(() => {
         window.location.href = url.href;
       }, 7000);
     });

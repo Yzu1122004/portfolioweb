@@ -82,6 +82,10 @@ body::before {
 }
 
 body.is-leaving .page-transition {
+  clip-path: inset(0 0 0 0);
+}
+
+body.is-leaving.is-wiping .page-transition {
   animation: pageWipe 2000ms ease forwards;
 }
 
@@ -92,6 +96,15 @@ body.is-leaving .page-transition::after {
 
 body.is-loaded .page-transition {
   animation: pageReveal 700ms ease both;
+}
+
+body.is-loaded.is-leaving .page-transition {
+  clip-path: inset(0 0 0 0);
+  animation: none;
+}
+
+body.is-loaded.is-leaving.is-wiping .page-transition {
+  animation: pageWipe 2000ms ease forwards;
 }
 
 .bubble-canvas {
@@ -1419,7 +1432,7 @@ textarea {
 
 @keyframes pageWipe {
   from {
-    clip-path: inset(0 100% 0 0);
+    clip-path: inset(0 48% 0 48%);
   }
   to {
     clip-path: inset(0 0 0 0);
