@@ -50,11 +50,9 @@ function doPost(e) {
     
     // 自動對應第一列的欄位名稱 (id, title, type 等)
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    const row = headers.map((header) => data[header] || "");
     const idColumnIndex = headers.indexOf("id");
     if (idColumnIndex === -1) throw new Error("第一列缺少 id 欄位");
 
-    // 找到同 id 就更新原列；找不到才新增
     const lastRow = sheet.getLastRow();
     let targetRow = -1;
 
@@ -68,6 +66,17 @@ function doPost(e) {
       if (matchedIndex >= 0) targetRow = matchedIndex + 2;
     }
 
+    if (data.action === "delete") {
+      if (targetRow < 0) throw new Error("找不到要刪除的作品 id：" + data.id);
+      sheet.deleteRow(targetRow);
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true, message: "刪除成功！" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const row = headers.map((header) => data[header] || "");
+
+    // 找到同 id 就更新原列；找不到才新增
     if (targetRow >= 0) {
       sheet.getRange(targetRow, 1, 1, row.length).setValues([row]);
     } else {

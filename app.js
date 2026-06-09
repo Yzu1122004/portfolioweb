@@ -165,8 +165,7 @@ function appendProjectActions(content, project) {
   deleteButton.className = "button danger small-button";
   deleteButton.type = "button";
   deleteButton.textContent = "刪除";
-  deleteButton.disabled = true;
-  deleteButton.title = "雲端刪除需要另外設定 GAS delete API";
+  deleteButton.title = "刪除此作品";
   deleteButton.addEventListener("click", () => deleteProject(project.id));
 
   actions.append(editButton, deleteButton);
@@ -594,13 +593,13 @@ function upsertProject(project) {
   setSavedProjects(savedProjects);
 }
   
-async function syncProjectToCloud(project) {
+async function syncProjectToCloud(project, action = "upsert") {
   const response = await fetch(GAS_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "text/plain" 
     },
-    body: JSON.stringify(project)
+    body: JSON.stringify({ ...project, action })
   });
 
   if (!response.ok) {
@@ -639,11 +638,31 @@ function editProject(project) {
   document.querySelector("#project-editor").scrollIntoView({ behavior: "smooth" });
 }
 
-function deleteProject(id) {
-  const nextProjects = getSavedProjects().filter((project) => project.id !== id);
-  setSavedProjects(nextProjects);
-  renderProjects();
-  resetForm();
+async function deleteProject(id) {
+  const project = getAllProjects().find((item) => item.id === id);
+  if (!project) return;
+
+  const confirmed = window.confirm(`確定要刪除「${project.title}」嗎？`);
+  if (!confirmed) return;
+
+  try {
+    await syncProjectToCloud({ id }, "delete");
+    localStorage.removeItem(storageKey);
+    cloudProjects = cloudProjects.filter((item) => normalizeProject(item, 0, true).id !== id);
+
+    try {
+      await loadCloudProjects();
+    } catch (reloadError) {
+      console.warn("刪除已送出，但 OpenSheet 尚未更新快取:", reloadError);
+    }
+
+    renderProjects();
+    resetForm();
+    alert("刪除請求已送出。若畫面尚未立即更新，請等 1~2 分鐘後重新整理。");
+  } catch (error) {
+    console.error("刪除雲端作品失敗:", error);
+    alert("刪除失敗，請確認 Google Apps Script 已更新為支援 delete action 的版本。");
+  }
 }
 
 if (projectForm) {
