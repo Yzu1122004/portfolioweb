@@ -1055,9 +1055,10 @@ h3 {
 }
 
 .skill-constellation {
-  min-height: 440px;
+  min-height: 320px;
   position: relative;
   margin-bottom: 46px;
+  padding: 28px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
@@ -1118,28 +1119,28 @@ h3 {
 }
 
 .skill-node:nth-of-type(2) {
-  left: 11%;
-  top: 18%;
+  left: 12%;
+  top: 16%;
 }
 
 .skill-node:nth-of-type(3) {
-  right: 10%;
+  right: 12%;
   top: 16%;
 }
 
 .skill-node:nth-of-type(4) {
-  left: 10%;
-  bottom: 19%;
+  left: 13%;
+  bottom: 18%;
 }
 
 .skill-node:nth-of-type(5) {
-  right: 9%;
+  right: 13%;
   bottom: 18%;
 }
 
 .skill-node:nth-of-type(6) {
   left: 50%;
-  bottom: 8%;
+  bottom: 9%;
   transform: translateX(-50%);
 }
 
@@ -1423,7 +1424,9 @@ textarea {
   }
 
   .skill-constellation {
-    min-height: 520px;
+    min-height: 0;
+    height: auto;
+    padding: 18px;
   }
 
   .skill-node,
@@ -1448,7 +1451,6 @@ textarea {
     grid-template-columns: 1fr;
     align-content: center;
     gap: 12px;
-    padding: 22px;
   }
 
   .skill-lines {
