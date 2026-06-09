@@ -4,7 +4,7 @@
 
 ## Current flow
 
-- 公開頁、管理頁、作品介紹頁會從 Google Sheet / OpenSheet 讀取作品資料。
+- 公開頁、管理頁、作品介紹頁會透過 Google Apps Script 從 Google Sheet 讀取作品資料。
 - 管理頁送出作品時，會 POST 到 Google Apps Script。
 - `localStorage` 只作為雲端失敗時的暫存備援。
 
@@ -34,10 +34,30 @@ image
 const SHEET_NAME = "測試"; // 請確保與你試算表左下角分頁名稱一模一樣
 
 function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({ 
-    status: "success", 
-    message: "Google Apps Script 連線成功！" 
-  })).setMimeType(ContentService.MimeType.JSON);
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) throw new Error("找不到工作表：" + SHEET_NAME);
+
+    const values = sheet.getDataRange().getValues();
+    const headers = values.shift();
+    const rows = values
+      .filter((row) => row.some((cell) => cell !== ""))
+      .map((row) => {
+        const item = {};
+        headers.forEach((header, index) => {
+          item[header] = row[index] || "";
+        });
+        return item;
+      });
+
+    return ContentService
+      .createTextOutput(JSON.stringify(rows))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 
 function doPost(e) {
@@ -109,4 +129,4 @@ function doPost(e) {
 
 ## Notes
 
-OpenSheet 有快取，新增作品後其他電腦可能需要 1 到 2 分鐘才看得到。
+每次修改 Apps Script 後都要重新 Deploy，並把最新 Web app URL 放到 `app.js` 的 `GAS_API_URL`。
