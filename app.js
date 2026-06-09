@@ -544,7 +544,7 @@ function setupProjectTilt(cards) {
       const x = (event.clientX - rect.left) / rect.width - 0.5;
       const y = (event.clientY - rect.top) / rect.height - 0.5;
       card.classList.add("is-tilting");
-      card.style.transform = `perspective(900px) rotateX(${y * -7}deg) rotateY(${x * 8}deg) translateY(-6px)`;
+      card.style.transform = `perspective(820px) rotateX(${y * -14}deg) rotateY(${x * 16}deg) translateY(-10px) scale(1.015)`;
     });
 
     card.addEventListener("pointerleave", () => {

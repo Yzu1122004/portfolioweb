@@ -835,7 +835,9 @@ h3 {
 }
 
 .project-card.is-tilting {
-  transition: transform 90ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  border-color: rgba(255, 210, 31, 0.78);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 210, 31, 0.2);
+  transition: transform 70ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .project-card--details {
