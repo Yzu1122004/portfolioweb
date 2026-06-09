@@ -51,13 +51,32 @@ function doPost(e) {
     // 自動對應第一列的欄位名稱 (id, title, type 等)
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
     const row = headers.map((header) => data[header] || "");
+    const idColumnIndex = headers.indexOf("id");
+    if (idColumnIndex === -1) throw new Error("第一列缺少 id 欄位");
 
-    // 寫入試算表
-    sheet.appendRow(row);
+    // 找到同 id 就更新原列；找不到才新增
+    const lastRow = sheet.getLastRow();
+    let targetRow = -1;
+
+    if (data.id && lastRow > 1) {
+      const ids = sheet
+        .getRange(2, idColumnIndex + 1, lastRow - 1, 1)
+        .getValues()
+        .flat()
+        .map(String);
+      const matchedIndex = ids.findIndex((id) => id === String(data.id));
+      if (matchedIndex >= 0) targetRow = matchedIndex + 2;
+    }
+
+    if (targetRow >= 0) {
+      sheet.getRange(targetRow, 1, 1, row.length).setValues([row]);
+    } else {
+      sheet.appendRow(row);
+    }
 
     // 關鍵：成功時回傳正確的 JSON 格式
     return ContentService
-      .createTextOutput(JSON.stringify({ ok: true, message: "新增成功！" }))
+      .createTextOutput(JSON.stringify({ ok: true, message: targetRow >= 0 ? "更新成功！" : "新增成功！" }))
       .setMimeType(ContentService.MimeType.JSON);
       
   } catch (error) {
@@ -69,7 +88,7 @@ function doPost(e) {
 }
 ```
 
-如果前端使用 `mode: "no-cors"`，不要強制設定 `Content-Type: application/json`。目前網站會用純文字 body 送出 JSON，Apps Script 仍可用 `JSON.parse(e.postData.contents)` 解析。
+目前網站會用 `Content-Type: text/plain` 送出 JSON 字串，Apps Script 可用 `JSON.parse(e.postData.contents)` 解析。不要改回 `no-cors`，否則前端無法判斷同步是否成功。
 
 ## Deploy
 

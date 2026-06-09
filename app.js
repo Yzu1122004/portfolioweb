@@ -158,15 +158,15 @@ function appendProjectActions(content, project) {
   const editButton = document.createElement("button");
   editButton.className = "button secondary small-button";
   editButton.type = "button";
-  editButton.textContent = project.isDefault ? "複製編輯" : "編輯";
+  editButton.textContent = "編輯";
   editButton.addEventListener("click", () => editProject(project));
 
   const deleteButton = document.createElement("button");
   deleteButton.className = "button danger small-button";
   deleteButton.type = "button";
   deleteButton.textContent = "刪除";
-  deleteButton.disabled = project.isDefault;
-  deleteButton.title = project.isDefault ? "預設作品請到 projects.js 修改" : "刪除此作品";
+  deleteButton.disabled = true;
+  deleteButton.title = "雲端刪除需要另外設定 GAS delete API";
   deleteButton.addEventListener("click", () => deleteProject(project.id));
 
   actions.append(editButton, deleteButton);
@@ -595,10 +595,8 @@ function upsertProject(project) {
 }
   
 async function syncProjectToCloud(project) {
-  // 改回發送純 JSON 字串
   const response = await fetch(GAS_API_URL, {
     method: "POST",
-    // 這裡不要用 no-cors，才能正常接收成功或失敗的狀態
     headers: {
       "Content-Type": "text/plain" 
     },
@@ -613,7 +611,7 @@ async function syncProjectToCloud(project) {
 }
 
 async function loadCloudProjects() {
-  const response =await fetch(SHEET_API_URL);
+  const response = await fetch(`${SHEET_API_URL}?t=${Date.now()}`);
   if (!response.ok) throw new Error("無法取得雲端資料");
   cloudProjects = await response.json();
   return cloudProjects;
@@ -622,7 +620,7 @@ async function loadCloudProjects() {
 function editProject(project) {
   if (!projectForm) return;
 
-  projectForm.elements.id.value = project.isDefault ? "" : project.id;
+  projectForm.elements.id.value = project.id;
   projectForm.elements.title.value = project.title;
   projectForm.elements.type.value = project.type;
   projectForm.elements.category.value = project.category;
@@ -634,8 +632,8 @@ function editProject(project) {
   projectForm.elements.link.value = project.link || "";
   projectForm.elements.image.value = project.image || "";
 
-  if (formTitle) formTitle.textContent = project.isDefault ? "複製預設作品" : "編輯作品";
-  if (submitProject) submitProject.textContent = project.isDefault ? "另存作品" : "儲存修改";
+  if (formTitle) formTitle.textContent = "編輯作品";
+  if (submitProject) submitProject.textContent = "儲存修改";
   if (cancelEdit) cancelEdit.hidden = false;
 
   document.querySelector("#project-editor").scrollIntoView({ behavior: "smooth" });
