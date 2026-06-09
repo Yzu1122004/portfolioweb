@@ -462,23 +462,19 @@ function shouldPlayPageIntro(isPublicHome) {
   return shouldPlay;
 }
 
+function playPageTransition() {
+  document.body.classList.add("is-transitioning");
+  window.setTimeout(() => {
+    document.body.classList.remove("is-transitioning");
+  }, 7000);
+}
+
 function setupPageTransitions() {
   const isPublicHome = document.body.dataset.page === "public";
   const playIntro = shouldPlayPageIntro(isPublicHome);
 
   if (playIntro) {
-    document.body.classList.add("is-intro-loading");
-    window.setTimeout(() => {
-      document.body.classList.add("is-holding");
-    }, 2000);
-    window.setTimeout(() => {
-      document.body.classList.add("is-intro-revealing");
-    }, 5000);
-    window.setTimeout(() => {
-      document.body.classList.remove("is-intro-loading", "is-holding", "is-intro-revealing");
-    }, 7000);
-  } else {
-    document.body.classList.add("is-loaded");
+    playPageTransition();
   }
 
   document.addEventListener("click", (event) => {

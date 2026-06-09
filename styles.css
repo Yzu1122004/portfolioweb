@@ -109,24 +109,12 @@ body::before {
   animation: loadingTextJump 720ms ease-in-out infinite;
 }
 
-body.is-intro-loading .page-transition {
-  animation: pageWipe 2000ms ease forwards;
+body.is-transitioning .page-transition {
+  animation: pageCoverFlow 7000ms ease both;
 }
 
-body.is-holding .loading-mark {
-  opacity: 1;
-}
-
-body.is-intro-loading.is-intro-revealing .page-transition {
-  animation: pageReveal 2000ms ease forwards;
-}
-
-body.is-intro-loading.is-intro-revealing .loading-mark {
-  opacity: 0;
-}
-
-body.is-loaded .page-transition {
-  animation: pageReveal 700ms ease both;
+body.is-transitioning .loading-mark {
+  animation: loadingMarkFlow 7000ms ease both;
 }
 
 .bubble-canvas {
@@ -1452,21 +1440,31 @@ textarea {
   }
 }
 
-@keyframes pageWipe {
-  from {
+@keyframes pageCoverFlow {
+  0% {
     clip-path: inset(0 100% 0 0);
   }
-  to {
-    clip-path: inset(0 0 0 0);
-  }
-}
-
-@keyframes pageReveal {
-  0% {
+  28.57%,
+  71.43% {
     clip-path: inset(0 0 0 0);
   }
   100% {
     clip-path: inset(0 0 0 100%);
+  }
+}
+
+@keyframes loadingMarkFlow {
+  0%,
+  26% {
+    opacity: 0;
+  }
+  30%,
+  70% {
+    opacity: 1;
+  }
+  74%,
+  100% {
+    opacity: 0;
   }
 }
 
