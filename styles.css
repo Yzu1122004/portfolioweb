@@ -47,33 +47,61 @@ body::before {
   clip-path: inset(0 100% 0 0);
 }
 
-.page-transition::before,
-.page-transition::after {
+.loading-mark {
   position: absolute;
+  top: 50%;
   left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 22px;
   opacity: 0;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   transition: opacity 180ms ease;
 }
 
-.page-transition::before {
-  content: "";
-  top: calc(50% - 74px);
+.loading-orbit {
+  position: relative;
   width: 58px;
   height: 58px;
-  background:
-    radial-gradient(circle at 50% 8%, var(--black) 0 5px, transparent 6px),
-    radial-gradient(circle at 86% 29%, var(--black) 0 5px, transparent 6px),
-    radial-gradient(circle at 86% 71%, var(--black) 0 5px, transparent 6px),
-    radial-gradient(circle at 50% 92%, var(--black) 0 5px, transparent 6px),
-    radial-gradient(circle at 14% 71%, var(--black) 0 5px, transparent 6px),
-    radial-gradient(circle at 14% 29%, var(--black) 0 5px, transparent 6px);
   animation: loadingDotsSpin 900ms linear infinite;
 }
 
-.page-transition::after {
-  content: "Loading";
+.loading-orbit span {
+  position: absolute;
+  left: 50%;
   top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--black);
+  transform: translate(-50%, -50%) rotate(calc(var(--dot-index) * 60deg)) translateY(-25px);
+}
+
+.loading-orbit span:nth-child(1) {
+  --dot-index: 0;
+}
+
+.loading-orbit span:nth-child(2) {
+  --dot-index: 1;
+}
+
+.loading-orbit span:nth-child(3) {
+  --dot-index: 2;
+}
+
+.loading-orbit span:nth-child(4) {
+  --dot-index: 3;
+}
+
+.loading-orbit span:nth-child(5) {
+  --dot-index: 4;
+}
+
+.loading-orbit span:nth-child(6) {
+  --dot-index: 5;
+}
+
+.loading-mark strong {
   color: var(--black);
   font-size: clamp(2rem, 6vw, 4.8rem);
   font-weight: 900;
@@ -89,8 +117,7 @@ body.is-leaving.is-wiping .page-transition {
   animation: pageWipe 2000ms ease forwards;
 }
 
-body.is-leaving .page-transition::before,
-body.is-leaving .page-transition::after {
+body.is-leaving .loading-mark {
   opacity: 1;
 }
 
@@ -105,6 +132,10 @@ body.is-loaded.is-leaving .page-transition {
 
 body.is-loaded.is-leaving.is-wiping .page-transition {
   animation: pageWipe 2000ms ease forwards;
+}
+
+body.is-loaded.is-leaving.is-wiping .loading-mark {
+  opacity: 1;
 }
 
 .bubble-canvas {
@@ -1451,16 +1482,16 @@ textarea {
 @keyframes loadingTextJump {
   0%,
   100% {
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
   45% {
-    transform: translateX(-50%) translateY(-12px);
+    transform: translateY(-12px);
   }
 }
 
 @keyframes loadingDotsSpin {
   to {
-    transform: translateX(-50%) rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 
