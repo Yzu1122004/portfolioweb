@@ -7,6 +7,7 @@ const siteHeader = document.querySelector(".site-header");
 const projectsGrid = document.querySelector("#projectsGrid");
 const projectDetailPanel = document.querySelector("#projectDetailPanel");
 const heroThreeCanvas = document.querySelector("#heroThree");
+const heroCategoryButtons = document.querySelectorAll("[data-project-filter]");
 const skillConstellation = document.querySelector("#skillConstellation");
 const projectForm = document.querySelector("#projectForm");
 const sortButtons = document.querySelectorAll("[data-sort]");
@@ -559,10 +560,30 @@ function setupSkillConstellation() {
   const nodes = skillConstellation.querySelectorAll("[data-skill-filter]");
   nodes.forEach((node) => {
     node.addEventListener("click", () => {
-      currentSkillFilter = node.dataset.skillFilter;
-      nodes.forEach((item) => item.classList.toggle("is-active", item === node));
-      renderProjects();
-      if (projectsGrid) projectsGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+      applyProjectFilter(node.dataset.skillFilter);
+    });
+  });
+}
+
+function applyProjectFilter(filter) {
+  currentSkillFilter = filter;
+
+  document.querySelectorAll("[data-skill-filter]").forEach((item) => {
+    item.classList.toggle("is-active", item.dataset.skillFilter === filter);
+  });
+
+  heroCategoryButtons.forEach((item) => {
+    item.classList.toggle("is-active", item.dataset.projectFilter === filter);
+  });
+
+  renderProjects();
+  if (projectsGrid) projectsGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function setupHeroCategoryLinks() {
+  heroCategoryButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      applyProjectFilter(button.dataset.projectFilter);
     });
   });
 }
@@ -948,6 +969,7 @@ updateControlButtons(viewButtons, currentView, "view");
 setupPageTransitions();
 setupHeroThree();
 setupSkillConstellation();
+setupHeroCategoryLinks();
 resetForm();
 updateHeaderState();
 window.addEventListener("scroll", updateHeaderState, { passive: true });

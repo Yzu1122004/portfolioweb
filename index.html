@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portfolio | 作品集網站</title>
-  <link rel="stylesheet" href="styles.css?v=20260610-3">
+  <link rel="stylesheet" href="styles.css?v=20260610-6">
 </head>
 <body data-page="public">
   <div class="page-transition" aria-hidden="true"></div>
@@ -46,18 +46,18 @@
 
       <div class="hero-visual hero-visual--three" aria-label="互動 3D 作品集視覺">
         <canvas id="heroThree" aria-hidden="true"></canvas>
-        <div class="visual-panel panel-main">
-          <span>01</span>
-          <strong>Portfolio</strong>
-        </div>
-        <div class="visual-panel panel-side">
-          <span>UI</span>
-          <strong>Case Study</strong>
-        </div>
-        <div class="visual-panel panel-bottom">
+        <button class="visual-panel panel-main" type="button" data-project-filter="網頁">
           <span>Web</span>
-          <strong>Project</strong>
-        </div>
+          <strong>網頁</strong>
+        </button>
+        <button class="visual-panel panel-side" type="button" data-project-filter="遊戲">
+          <span>Game</span>
+          <strong>遊戲</strong>
+        </button>
+        <button class="visual-panel panel-bottom" type="button" data-project-filter="3D建模">
+          <span>3D</span>
+          <strong>3D建模</strong>
+        </button>
       </div>
     </section>
 
@@ -218,7 +218,7 @@
     <p>© 2026 Portfolio. All rights reserved.</p>
   </footer>
 
-  <script src="projects.js?v=20260610-5"></script>
-  <script src="app.js?v=20260610-5"></script>
+  <script src="projects.js?v=20260610-6"></script>
+  <script src="app.js?v=20260610-6"></script>
 </body>
 </html>
