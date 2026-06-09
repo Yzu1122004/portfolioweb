@@ -751,14 +751,27 @@ viewButtons.forEach((button) => {
 });
 
 if (navToggle && navLinks) {
+  const closeMobileNav = () => {
+    navLinks.classList.remove("is-open");
+    navToggle.classList.remove("is-active");
+    navToggle.setAttribute("aria-expanded", "false");
+  };
+
   navToggle.addEventListener("click", () => {
     const isOpen = navLinks.classList.toggle("is-open");
+    navToggle.classList.toggle("is-active", isOpen);
     navToggle.setAttribute("aria-expanded", String(isOpen));
   });
 
-  navLinks.addEventListener("click", () => {
-    navLinks.classList.remove("is-open");
-    navToggle.setAttribute("aria-expanded", "false");
+  navLinks.addEventListener("click", (event) => {
+    const link = event.target.closest("a");
+    if (!link) return;
+
+    link.classList.add("is-tapped");
+    window.setTimeout(() => {
+      link.classList.remove("is-tapped");
+      closeMobileNav();
+    }, 140);
   });
 }
 

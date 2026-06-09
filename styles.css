@@ -156,6 +156,7 @@ img {
   border-radius: 8px;
   background: transparent;
   cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
 }
 
 .nav-toggle span {
@@ -164,6 +165,30 @@ img {
   height: 2px;
   margin: 4px auto;
   background: var(--yellow);
+  border-radius: 999px;
+  transition: transform 240ms ease, opacity 180ms ease, background 180ms ease;
+}
+
+.nav-toggle.is-active {
+  background: var(--yellow);
+  border-color: var(--yellow);
+  transform: translateY(-1px);
+}
+
+.nav-toggle.is-active span {
+  background: var(--black);
+}
+
+.nav-toggle.is-active span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.nav-toggle.is-active span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.is-active span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
 main {
@@ -1261,22 +1286,65 @@ textarea {
     top: 72px;
     left: 0;
     right: 0;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 0;
-    padding: 10px 16px 18px;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 16px;
     border-bottom: 1px solid var(--line);
-    background: var(--black);
+    background: rgba(11, 11, 11, 0.98);
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+    transition: max-height 320ms ease, opacity 220ms ease, transform 260ms ease, padding 260ms ease;
   }
 
   .nav-links.is-open {
-    display: flex;
+    max-height: 320px;
+    padding: 10px 16px 18px;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
 
   .nav-links a {
     position: static;
-    padding: 12px 0;
+    padding: 13px 10px;
+    border-radius: 8px;
+    transform: translateY(-6px);
+    opacity: 0;
+    transition: color 180ms ease, background 180ms ease, transform 260ms ease, opacity 220ms ease;
+  }
+
+  .nav-links.is-open a {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .nav-links.is-open a:nth-child(1) {
+    transition-delay: 40ms;
+  }
+
+  .nav-links.is-open a:nth-child(2) {
+    transition-delay: 80ms;
+  }
+
+  .nav-links.is-open a:nth-child(3) {
+    transition-delay: 120ms;
+  }
+
+  .nav-links.is-open a:nth-child(4) {
+    transition-delay: 160ms;
+  }
+
+  .nav-links a:hover,
+  .nav-links a:focus-visible,
+  .nav-links a.is-tapped {
+    color: var(--black);
+    background: var(--yellow);
   }
 
   .nav-links a::after {
