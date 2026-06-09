@@ -6,6 +6,8 @@ const GAS_API_URL ="https://script.google.com/macros/s/AKfycbwYRux2BuFOVmeTSNFe3
 const siteHeader = document.querySelector(".site-header");
 const projectsGrid = document.querySelector("#projectsGrid");
 const projectDetailPanel = document.querySelector("#projectDetailPanel");
+const heroThreeCanvas = document.querySelector("#heroThree");
+const skillConstellation = document.querySelector("#skillConstellation");
 const projectForm = document.querySelector("#projectForm");
 const sortButtons = document.querySelectorAll("[data-sort]");
 const viewButtons = document.querySelectorAll("[data-view]");
@@ -19,6 +21,7 @@ const projectCount = document.querySelector("#projectCount");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let currentSort = "date-desc";
 let currentView = "cards";
+let currentSkillFilter = "all";
 const revealObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -129,6 +132,23 @@ function getAllProjects() {
   return localFallbackProjects.length > 0
     ? localFallbackProjects
     : defaultProjects.map((project, index) => normalizeProject(project, index, true));
+}
+
+function getFilteredProjects(projects) {
+  if (currentSkillFilter === "all") return projects;
+  if (projectTypes.includes(currentSkillFilter)) {
+    return projects.filter((project) => project.type === currentSkillFilter);
+  }
+
+  const keywordMap = {
+    code: ["Python", "Java", "JavaScript", "C#", "C++", "程式", "前端"],
+    tool: ["Git", "Visual Studio", "Unity", "Blender", "工具"]
+  };
+  const keywords = keywordMap[currentSkillFilter] || [];
+  return projects.filter((project) => {
+    const haystack = `${project.title} ${project.category} ${project.description} ${project.detail} ${project.role} ${project.tools}`;
+    return keywords.some((keyword) => haystack.toLowerCase().includes(keyword.toLowerCase()));
+  });
 }
 
 function getSortedProjects(projects) {
@@ -265,7 +285,7 @@ function renderProjects() {
   if (!projectsGrid) return;
 
   projectsGrid.replaceChildren();
-  const projects = getAllProjects();
+  const projects = getFilteredProjects(getAllProjects());
   const sortedProjects = getSortedProjects(projects);
   const viewMode = getViewMode();
 
@@ -292,7 +312,8 @@ function renderProjects() {
 
     if (projectsInType.length > 0) {
       projectsInType.forEach((project, index) => {
-        categoryGrid.appendChild(createProjectCard(project, index, viewMode));
+        const card = createProjectCard(project, index, viewMode);
+        categoryGrid.appendChild(card);
       });
     } else {
       const empty = document.createElement("p");
@@ -310,6 +331,7 @@ function renderProjects() {
   }
 
   observeReveals(projectsGrid.querySelectorAll(".reveal"));
+  setupProjectTilt(projectsGrid.querySelectorAll(".project-card"));
 }
 
 function getInitialDetailProject(projects) {
@@ -413,6 +435,127 @@ function updateHeaderState() {
   siteHeader.classList.toggle("is-scrolled", window.scrollY > 8);
 }
 
+function setupPageTransitions() {
+  document.body.classList.add("is-loaded");
+
+  document.querySelectorAll("a[href]").forEach((link) => {
+    const href = link.getAttribute("href");
+    if (!href || href.startsWith("#") || link.target === "_blank" || href.startsWith("mailto:")) return;
+
+    link.addEventListener("click", (event) => {
+      const url = new URL(href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+
+      event.preventDefault();
+      document.body.classList.add("is-leaving");
+      window.setTimeout(() => {
+        window.location.href = url.href;
+      }, 360);
+    });
+  });
+}
+
+function setupHeroThree() {
+  if (!heroThreeCanvas || reduceMotion || !window.THREE) return;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  const renderer = new THREE.WebGLRenderer({ canvas: heroThreeCanvas, alpha: true, antialias: true });
+  const pointer = { x: 0, y: 0 };
+  const group = new THREE.Group();
+
+  const yellowMaterial = new THREE.MeshStandardMaterial({
+    color: 0xffd21f,
+    metalness: 0.45,
+    roughness: 0.28
+  });
+  const darkMaterial = new THREE.MeshStandardMaterial({
+    color: 0x151515,
+    metalness: 0.25,
+    roughness: 0.42
+  });
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffd21f, transparent: true, opacity: 0.42 });
+
+  const mainCube = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 1.8), yellowMaterial);
+  const innerCube = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.92, 0.92), darkMaterial);
+  innerCube.position.set(0.45, -0.42, 0.62);
+  group.add(mainCube, innerCube);
+
+  for (let index = 0; index < 42; index += 1) {
+    const geometry = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3((Math.random() - 0.5) * 7, (Math.random() - 0.5) * 4.2, (Math.random() - 0.5) * 3),
+      new THREE.Vector3((Math.random() - 0.5) * 7, (Math.random() - 0.5) * 4.2, (Math.random() - 0.5) * 3)
+    ]);
+    scene.add(new THREE.Line(geometry, lineMaterial));
+  }
+
+  scene.add(group);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.72));
+  const keyLight = new THREE.PointLight(0xffd21f, 2.2, 10);
+  keyLight.position.set(2.5, 2.4, 3.2);
+  scene.add(keyLight);
+  camera.position.set(0, 0, 6);
+
+  function resize() {
+    const rect = heroThreeCanvas.parentElement.getBoundingClientRect();
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(rect.width, rect.height, false);
+    camera.aspect = rect.width / rect.height;
+    camera.updateProjectionMatrix();
+  }
+
+  heroThreeCanvas.parentElement.addEventListener("pointermove", (event) => {
+    const rect = heroThreeCanvas.parentElement.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    pointer.y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+  });
+
+  function animate(time) {
+    group.rotation.x += ((pointer.y * 0.36) - group.rotation.x) * 0.04;
+    group.rotation.y += ((pointer.x * 0.48 + time * 0.00035) - group.rotation.y) * 0.04;
+    group.position.y = Math.sin(time * 0.0014) * 0.12;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+  requestAnimationFrame(animate);
+}
+
+function setupProjectTilt(cards) {
+  if (reduceMotion) return;
+
+  cards.forEach((card) => {
+    card.addEventListener("pointermove", (event) => {
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      card.classList.add("is-tilting");
+      card.style.transform = `perspective(900px) rotateX(${y * -7}deg) rotateY(${x * 8}deg) translateY(-6px)`;
+    });
+
+    card.addEventListener("pointerleave", () => {
+      card.classList.remove("is-tilting");
+      card.style.transform = "";
+    });
+  });
+}
+
+function setupSkillConstellation() {
+  if (!skillConstellation) return;
+
+  const nodes = skillConstellation.querySelectorAll("[data-skill-filter]");
+  nodes.forEach((node) => {
+    node.addEventListener("click", () => {
+      currentSkillFilter = node.dataset.skillFilter;
+      nodes.forEach((item) => item.classList.toggle("is-active", item === node));
+      renderProjects();
+      if (projectsGrid) projectsGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
 function setupBubblePlayground() {
   if (reduceMotion) return;
 
@@ -482,7 +625,7 @@ function setupBubblePlayground() {
   function animate() {
     context.clearRect(0, 0, width, height);
 
-    bubbles.forEach((bubble) => {
+    bubbles.forEach((bubble, bubbleIndex) => {
       if (pointer.active) {
         pushBubble(bubble, 1);
       }
@@ -515,6 +658,19 @@ function setupBubblePlayground() {
       context.arc(bubble.x, bubble.y, bubble.radius, 0, Math.PI * 2);
       context.fillStyle = gradient;
       context.fill();
+
+      for (let index = bubbleIndex + 1; index < bubbles.length; index += 1) {
+        const other = bubbles[index];
+        const distance = Math.hypot(bubble.x - other.x, bubble.y - other.y);
+        if (distance < 118) {
+          context.beginPath();
+          context.moveTo(bubble.x, bubble.y);
+          context.lineTo(other.x, other.y);
+          context.strokeStyle = `rgba(255, 210, 31, ${0.08 * (1 - distance / 118)})`;
+          context.lineWidth = 1;
+          context.stroke();
+        }
+      }
     });
 
     requestAnimationFrame(animate);
@@ -778,6 +934,9 @@ if (navToggle && navLinks) {
 observeReveals(document.querySelectorAll(".section, .admin-stats, .info-block, .about-card, .project-form"));
 updateControlButtons(sortButtons, currentSort, "sort");
 updateControlButtons(viewButtons, currentView, "view");
+setupPageTransitions();
+setupHeroThree();
+setupSkillConstellation();
 resetForm();
 updateHeaderState();
 window.addEventListener("scroll", updateHeaderState, { passive: true });

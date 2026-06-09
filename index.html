@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css?v=20260610-3">
 </head>
 <body data-page="public">
+  <div class="page-transition" aria-hidden="true"></div>
   <header class="site-header">
     <nav class="header-bar" aria-label="主要導覽">
       <a class="brand" href="#home">
@@ -43,7 +44,8 @@
         </div>
       </div>
 
-      <div class="hero-visual" aria-label="作品集視覺預覽">
+      <div class="hero-visual hero-visual--three" aria-label="互動 3D 作品集視覺">
+        <canvas id="heroThree" aria-hidden="true"></canvas>
         <div class="visual-panel panel-main">
           <span>01</span>
           <strong>Portfolio</strong>
@@ -141,14 +143,20 @@
         <p class="eyebrow">Skills</p>
         <h2>技能</h2>
       </div>
-      <div class="skills-list">
-        <span>HTML</span>
-        <span>CSS</span>
-        <span>JavaScript</span>
-        <span>C++</span>
-        <span>C#</span>
-        <span>Java</span>
-        <span>Python</span>
+      <div class="skill-constellation" id="skillConstellation" aria-label="互動技能星圖">
+        <svg class="skill-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="50" y1="50" x2="20" y2="24"></line>
+          <line x1="50" y1="50" x2="78" y2="22"></line>
+          <line x1="50" y1="50" x2="18" y2="70"></line>
+          <line x1="50" y1="50" x2="82" y2="72"></line>
+          <line x1="50" y1="50" x2="50" y2="88"></line>
+        </svg>
+        <button class="skill-node skill-node--core" type="button" data-skill-filter="all">All</button>
+        <button class="skill-node" type="button" data-skill-filter="網頁">HTML / CSS / JS</button>
+        <button class="skill-node" type="button" data-skill-filter="遊戲">Unity / C#</button>
+        <button class="skill-node" type="button" data-skill-filter="3D建模">Blender</button>
+        <button class="skill-node" type="button" data-skill-filter="code">Python / Java</button>
+        <button class="skill-node" type="button" data-skill-filter="tool">Git / VS</button>
       </div>
       <div class="section-heading">
         <h2>工具</h2>
@@ -210,7 +218,8 @@
     <p>© 2026 Portfolio. All rights reserved.</p>
   </footer>
 
-  <script src="projects.js?v=20260610-2"></script>
-  <script src="app.js?v=20260610-2"></script>
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script src="projects.js?v=20260610-4"></script>
+  <script src="app.js?v=20260610-4"></script>
 </body>
 </html>
