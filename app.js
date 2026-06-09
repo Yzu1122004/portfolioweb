@@ -652,7 +652,7 @@ async function deleteProject(id) {
     try {
       await loadCloudProjects();
     } catch (reloadError) {
-      console.warn("刪除已送出，但 OpenSheet 尚未更新快取:", reloadError);
+      console.warn("刪除已送出，但雲端資料尚未更新:", reloadError);
     }
 
     renderProjects();
@@ -684,7 +684,7 @@ if (projectForm) {
       try {
         await loadCloudProjects();
       } catch (reloadError) {
-        console.warn("作品已送出，但 OpenSheet 尚未更新快取:", reloadError);
+        console.warn("作品已送出，但雲端資料尚未更新:", reloadError);
       }
 
       renderProjects();
