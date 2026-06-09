@@ -437,6 +437,18 @@ function updateHeaderState() {
   siteHeader.classList.toggle("is-scrolled", window.scrollY > 8);
 }
 
+function preloadNextPage(url) {
+  const prefetchLink = document.createElement("link");
+  prefetchLink.rel = "prefetch";
+  prefetchLink.href = url.href;
+  prefetchLink.as = "document";
+  document.head.appendChild(prefetchLink);
+
+  if ("fetch" in window) {
+    fetch(url.href, { cache: "force-cache" }).catch(() => {});
+  }
+}
+
 function setupPageTransitions() {
   const isPublicHome = document.body.dataset.page === "public";
 
@@ -466,6 +478,7 @@ function setupPageTransitions() {
     if (url.origin !== window.location.origin) return;
 
     event.preventDefault();
+    preloadNextPage(url);
     document.body.classList.remove("is-intro-loading", "is-holding", "is-intro-revealing");
     document.body.classList.add("is-loaded", "is-leaving");
     window.setTimeout(() => {
