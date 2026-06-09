@@ -109,16 +109,26 @@ body::before {
   animation: loadingTextJump 720ms ease-in-out infinite;
 }
 
+body.is-intro-loading .page-transition,
 body.is-leaving .page-transition {
   clip-path: inset(0 0 0 0);
 }
 
-body.is-leaving.is-wiping .page-transition {
-  animation: pageWipe 2000ms ease forwards;
-}
-
+body.is-intro-loading .loading-mark,
 body.is-leaving .loading-mark {
   opacity: 1;
+}
+
+body.is-intro-loading.is-intro-revealing .page-transition {
+  animation: pageReveal 2000ms ease forwards;
+}
+
+body.is-intro-loading.is-intro-revealing .loading-mark {
+  opacity: 0;
+}
+
+body.is-leaving.is-wiping .page-transition {
+  animation: pageWipe 2000ms ease forwards;
 }
 
 body.is-loaded .page-transition {
@@ -1463,7 +1473,7 @@ textarea {
 
 @keyframes pageWipe {
   from {
-    clip-path: inset(0 48% 0 48%);
+    clip-path: inset(0 0 0 0);
   }
   to {
     clip-path: inset(0 0 0 0);

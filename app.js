@@ -438,7 +438,19 @@ function updateHeaderState() {
 }
 
 function setupPageTransitions() {
-  document.body.classList.add("is-loaded");
+  const isPublicHome = document.body.dataset.page === "public";
+
+  if (isPublicHome) {
+    document.body.classList.add("is-intro-loading");
+    window.setTimeout(() => {
+      document.body.classList.add("is-intro-revealing");
+    }, 5000);
+    window.setTimeout(() => {
+      document.body.classList.remove("is-intro-loading", "is-intro-revealing");
+    }, 7000);
+  } else {
+    document.body.classList.add("is-loaded");
+  }
 
   document.querySelectorAll("a[href]").forEach((link) => {
     const href = link.getAttribute("href");
@@ -449,7 +461,8 @@ function setupPageTransitions() {
       if (url.origin !== window.location.origin) return;
 
       event.preventDefault();
-      document.body.classList.add("is-leaving");
+      document.body.classList.remove("is-intro-loading", "is-intro-revealing");
+      document.body.classList.add("is-loaded", "is-leaving");
       window.setTimeout(() => {
         document.body.classList.add("is-wiping");
       }, 5000);
