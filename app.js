@@ -443,10 +443,13 @@ function setupPageTransitions() {
   if (isPublicHome) {
     document.body.classList.add("is-intro-loading");
     window.setTimeout(() => {
+      document.body.classList.add("is-holding");
+    }, 2000);
+    window.setTimeout(() => {
       document.body.classList.add("is-intro-revealing");
     }, 5000);
     window.setTimeout(() => {
-      document.body.classList.remove("is-intro-loading", "is-intro-revealing");
+      document.body.classList.remove("is-intro-loading", "is-holding", "is-intro-revealing");
     }, 7000);
   } else {
     document.body.classList.add("is-loaded");
@@ -463,8 +466,11 @@ function setupPageTransitions() {
     if (url.origin !== window.location.origin) return;
 
     event.preventDefault();
-    document.body.classList.remove("is-intro-loading", "is-intro-revealing");
+    document.body.classList.remove("is-intro-loading", "is-holding", "is-intro-revealing");
     document.body.classList.add("is-loaded", "is-leaving");
+    window.setTimeout(() => {
+      document.body.classList.add("is-holding");
+    }, 2000);
     window.setTimeout(() => {
       document.body.classList.add("is-wiping");
     }, 5000);
