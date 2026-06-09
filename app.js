@@ -22,6 +22,7 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 let currentSort = "date-desc";
 let currentView = "cards";
 let currentSkillFilter = "all";
+let threeModulePromise = null;
 const revealObserver = "IntersectionObserver" in window
   ? new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -455,8 +456,18 @@ function setupPageTransitions() {
   });
 }
 
-function setupHeroThree() {
-  if (!heroThreeCanvas || reduceMotion || !window.THREE) return;
+async function setupHeroThree() {
+  if (!heroThreeCanvas || reduceMotion) return;
+
+  threeModulePromise ||= import("https://unpkg.com/three@0.160.0/build/three.module.js");
+
+  let THREE;
+  try {
+    THREE = await threeModulePromise;
+  } catch (error) {
+    console.warn("Three.js 模組載入失敗，略過 3D Hero。", error);
+    return;
+  }
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
