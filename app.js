@@ -452,7 +452,7 @@ function setupPageTransitions() {
       document.body.classList.add("is-leaving");
       window.setTimeout(() => {
         window.location.href = url.href;
-      }, 2000);
+      }, 7000);
     });
   });
 }
