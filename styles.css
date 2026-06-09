@@ -44,16 +44,54 @@ body::before {
   z-index: 9999;
   pointer-events: none;
   background: var(--yellow);
-  transform: scaleX(0);
-  transform-origin: left;
+  clip-path: inset(0 100% 0 0);
+}
+
+.page-transition::before,
+.page-transition::after {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 180ms ease;
+}
+
+.page-transition::before {
+  content: "";
+  top: calc(50% - 74px);
+  width: 58px;
+  height: 58px;
+  background:
+    radial-gradient(circle at 50% 8%, var(--black) 0 5px, transparent 6px),
+    radial-gradient(circle at 86% 29%, var(--black) 0 5px, transparent 6px),
+    radial-gradient(circle at 86% 71%, var(--black) 0 5px, transparent 6px),
+    radial-gradient(circle at 50% 92%, var(--black) 0 5px, transparent 6px),
+    radial-gradient(circle at 14% 71%, var(--black) 0 5px, transparent 6px),
+    radial-gradient(circle at 14% 29%, var(--black) 0 5px, transparent 6px);
+  animation: loadingDotsSpin 900ms linear infinite;
+}
+
+.page-transition::after {
+  content: "Loading";
+  top: 50%;
+  color: var(--black);
+  font-size: clamp(2rem, 6vw, 4.8rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  animation: loadingTextJump 720ms ease-in-out infinite;
 }
 
 body.is-leaving .page-transition {
-  animation: pageWipe 420ms ease forwards;
+  animation: pageWipe 2000ms ease forwards;
+}
+
+body.is-leaving .page-transition::before,
+body.is-leaving .page-transition::after {
+  opacity: 1;
 }
 
 body.is-loaded .page-transition {
-  animation: pageReveal 520ms ease both;
+  animation: pageReveal 700ms ease both;
 }
 
 .bubble-canvas {
@@ -427,8 +465,13 @@ h3 {
   width: 42%;
   height: 38%;
   padding: 22px;
+  color: var(--white);
   background: var(--black-soft);
   animation: floatPanel 5.8s 400ms ease-in-out infinite;
+}
+
+.panel-side span {
+  color: var(--yellow);
 }
 
 .panel-bottom {
@@ -1376,21 +1419,35 @@ textarea {
 
 @keyframes pageWipe {
   from {
-    transform: scaleX(0);
+    clip-path: inset(0 100% 0 0);
   }
   to {
-    transform: scaleX(1);
+    clip-path: inset(0 0 0 0);
   }
 }
 
 @keyframes pageReveal {
   0% {
-    transform: scaleX(1);
-    transform-origin: right;
+    clip-path: inset(0 0 0 0);
   }
   100% {
-    transform: scaleX(0);
-    transform-origin: right;
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+@keyframes loadingTextJump {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  45% {
+    transform: translateX(-50%) translateY(-12px);
+  }
+}
+
+@keyframes loadingDotsSpin {
+  to {
+    transform: translateX(-50%) rotate(360deg);
   }
 }
 
