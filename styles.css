@@ -43,8 +43,39 @@ body::before {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  background: var(--yellow);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.5), transparent 18%),
+    radial-gradient(circle at 78% 62%, rgba(11, 11, 11, 0.18), transparent 24%),
+    linear-gradient(90deg, rgba(11, 11, 11, 0.12) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(11, 11, 11, 0.1) 1px, transparent 1px),
+    var(--yellow);
+  background-size: auto, auto, 42px 42px, 42px 42px, auto;
   clip-path: inset(0 100% 0 0);
+}
+
+.page-transition::before,
+.page-transition::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.page-transition::before {
+  background:
+    repeating-linear-gradient(
+      115deg,
+      rgba(11, 11, 11, 0.16) 0 2px,
+      transparent 2px 18px
+    );
+  mix-blend-mode: multiply;
+}
+
+.page-transition::after {
+  background: linear-gradient(105deg, transparent 0 36%, rgba(255, 255, 255, 0.6) 48%, transparent 60% 100%);
+  transform: translateX(-45%);
 }
 
 .loading-mark {
@@ -111,6 +142,16 @@ body::before {
 
 body.is-transitioning .page-transition {
   animation: pageCoverFlow 7000ms ease both;
+}
+
+body.is-transitioning .page-transition::before {
+  opacity: 0.36;
+  animation: transitionStripeFlow 1200ms linear infinite;
+}
+
+body.is-transitioning .page-transition::after {
+  opacity: 0.6;
+  animation: transitionLightSweep 2600ms ease-in-out infinite;
 }
 
 body.is-transitioning .loading-mark {
@@ -1486,6 +1527,22 @@ textarea {
   74%,
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes transitionStripeFlow {
+  to {
+    transform: translate3d(36px, 0, 0);
+  }
+}
+
+@keyframes transitionLightSweep {
+  0%,
+  100% {
+    transform: translateX(-55%);
+  }
+  50% {
+    transform: translateX(55%);
   }
 }
 
